@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id               String       @id @default(uuid())
+  email            String       @unique
+  password_hash    String
+  role             String       // "DONANTE" O "RECOLECTOR"
+  nombre_entidad   String
+  coordenadas_base String       // Guardamos como "lat,lng"
+  
+  // Relaciones
+  foodDrops        FoodDrop[]   @relation("DonanteDrops")
+  claims           Claim[]      @relation("RecolectorClaims")
+}
+
+model FoodDrop {
+  id          String   @id @default(uuid())
+  donante_id  String
+  titulo      String
+  descripcion String?
+  categoria   String   // "Panadería", "Fruta", "Cocinados", etc.
+  estado      String   @default("DISPONIBLE") // "DISPONIBLE", "RESERVADO", "ENTREGADO"
+  creado_en   DateTime @default(now())
+
+  // Relaciones
+  donante     User     @relation("DonanteDrops", fields: [donante_id], references: [id], onDelete: Cascade)
+  claims      Claim[]
+
+  @@index([donante_id])
+}
+
+model Claim {
+  id                     String   @id @default(uuid())
+  drop_id                String
+  recolector_id          String
+  hora_recogida_estimada DateTime
+
+  // Relaciones
+  drop        FoodDrop @relation(fields: [drop_id], references: [id], onDelete: Cascade)
+  recolector  User     @relation("RecolectorClaims", fields: [recolector_id], references: [id], onDelete: Cascade)
+
+  @@index([drop_id])
+  @@index([recolector_id])
+}
