@@ -2,8 +2,7 @@ const db = require('../db');
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secreto_super_seguro';
+const { JWT_SECRET } = require('../config/auth');
 const SALT_ROUNDS = 10;
 
 // Helper: enviar el JWT como cookie HttpOnly segura

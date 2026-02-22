@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
-
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secreto_super_seguro';
+const { JWT_SECRET } = require('../config/auth');
 
 exports.verifyToken = (req, res, next) => {
     // 1. Intentar leer desde cookie HttpOnly (más seguro)
